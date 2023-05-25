@@ -1,14 +1,17 @@
 package Janela;
 
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.net.URL;
 import java.text.ParseException;
 
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
+import javax.swing.border.BevelBorder;
 import javax.swing.text.MaskFormatter;
 
 public class Objetos {
@@ -29,14 +32,14 @@ public void imagem(String caminho,Integer a,Integer b,Integer c ,Integer d,Integ
     public JLabel getImagem() {
         return imagem;
     }
-    public void mascara(String mascara,Integer a,Integer b,Integer c ,Integer d) {
+    public void mascara(String mascara) {
   	  try {
   		
             MaskFormatter mascaraData = new MaskFormatter(mascara);
             mascaraData.setPlaceholderCharacter('_');
-
+        	
             datas = new JFormattedTextField(mascaraData);
-            datas.setBounds(a,b,c,d);
+
         } catch (ParseException e) {
             e.printStackTrace();
         }}

@@ -22,11 +22,14 @@ import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+import javax.swing.border.BevelBorder;
+import javax.swing.text.MaskFormatter;
 
 import Conexao.Banco;
 
@@ -104,6 +107,7 @@ public class Principal extends JFrame {
 				}
 			}
 		});
+
 		Icon icone = new ImageIcon("/Imagens/othon.png");
 		entrar.setIcon(icone);
 		entrar.setFont(new java.awt.Font("Tahoma", 3, 24));
@@ -123,8 +127,8 @@ public class Principal extends JFrame {
 		entrar.setFont(new java.awt.Font("Tahoma", 3, 24));
 		entrar.setText("Entrar");
 		entrar.setBorder(javax.swing.BorderFactory.createBevelBorder(javax.swing.border.BevelBorder.RAISED));
-		label.setFont(new java.awt.Font("Ubuntu", 3, 48)); // NOI18N
-		label.setText("Registro de Reuniões");
+		label.setFont(new java.awt.Font("Ubuntu", 3, 48));
+		label.setText("Label");
 		add(nome);
 		add(senha);
 		add(nomel);

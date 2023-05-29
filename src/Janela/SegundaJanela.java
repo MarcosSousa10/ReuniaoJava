@@ -5,17 +5,26 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.MenuBar;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import com.toedter.calendar.*;
+
+import Conexao.Banco;
+
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -33,6 +42,7 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerDateModel;
+import javax.swing.Spring;
 import javax.swing.border.BevelBorder;
 import javax.swing.text.MaskFormatter;
 
@@ -41,7 +51,7 @@ public class SegundaJanela extends JFrame {
 	Dimension d = tk.getScreenSize();
 	Objetos obj = new Objetos();
 	JLabel usu = new JLabel();
-	JLabel nome = new JLabel();
+	JLabel nome = new JLabel("nome");
 	JLabel data = new JLabel();
 	JLabel hora = new JLabel();
 	JLabel hora2 = new JLabel();
@@ -60,6 +70,9 @@ public class SegundaJanela extends JFrame {
 	JMenuBar menuBar = new JMenuBar();
 	JComboBox<String> box;
 	JTextField sNome = new JTextField();
+	String escolhaRadio;
+	String formattedDate;
+	String idusuario;
 
 	public SegundaJanela() {
 
@@ -126,14 +139,9 @@ public class SegundaJanela extends JFrame {
 		hora2.setFont(new Font("Ubuntu", 3, 25));
 		hora2.setForeground(new Color(1, 1, 1));
 		add(hora2);
-		salvar.setText("Salvar");
-		salvar.setFont(new Font("Ubuntu", 3, 25));
-		salvar.setForeground(new Color(1, 1, 1));
-		add(salvar);
-		listar.setText("Listar");
-		listar.setFont(new Font("Ubuntu", 3, 25));
-		listar.setForeground(new Color(1, 1, 1));
-		add(listar);
+		ButtonEntrar();
+		ButtonListar();
+
 		radio();
 		usu.setFont(new Font("Ubuntu", 3, 25));
 
@@ -147,10 +155,8 @@ public class SegundaJanela extends JFrame {
 			public void propertyChange(PropertyChangeEvent evt) {
 				if ("date".equals(evt.getPropertyName())) {
 					Date selectedDate = (Date) evt.getNewValue();
-			        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-			        String formattedDate = dateFormat.format(selectedDate);
-			        
-			        JOptionPane.showMessageDialog(null, formattedDate);
+					SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+					formattedDate = dateFormat.format(selectedDate);
 				}
 			}
 		});
@@ -195,11 +201,106 @@ public class SegundaJanela extends JFrame {
 		add(horae);
 		add(obj.getImagem());
 		add(usu);
+		listarCargo();
+	}
+
+	public String listarCargo() {
+		try {
+			Connection con = Banco.fazconexao();
+			String sql = "select id_usuario from usuarios where nome_usuario=?";
+			PreparedStatement stmt;
+			stmt = con.prepareStatement(sql);
+			stmt.setString(1, usu.getText());
+			ResultSet rs = stmt.executeQuery();
+			while (rs.next()) {
+				int id = rs.getInt("id");
+				// sNome.setText(String.valueOf(id));
+				idusuario = String.valueOf(id);
+				JOptionPane.showMessageDialog(null, idusuario);
+
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return idusuario;
+
+	}
+
+	public void ButtonEntrar() {
+		salvar.setText("Salvar");
+		salvar.setFont(new Font("Ubuntu", 3, 25));
+		salvar.setForeground(new Color(1, 1, 1));
+		add(salvar);
+		salvar.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+					Connection con = Banco.fazconexao();
+					String sql = "select id_usuario from usuarios where nome_usuario=?";
+					PreparedStatement stmt;
+					stmt = con.prepareStatement(sql);
+					stmt.setString(1, usu.getText());
+					ResultSet rs = stmt.executeQuery();
+					int id = 0; // Variável para armazenar o ID
+	               
+	                
+	                String idusuario = String.valueOf(id);
+					if (rs.next()) {  
+						id = rs.getInt("id_usuario");
+						// sNome.setText(String.valueOf(id));
+						idusuario = String.valueOf(id);
+						String sql1 = "insert into alocacao (USUARIO,DATA,HORAINICIO,HORAFIM,EQUIPAMENTO,SALAREUNIAO,id_usuario)values(?,?,?,?,?,?,?)";
+						PreparedStatement stmt1 = con.prepareStatement(sql1);
+						stmt1.setString(1, sNome.getText());
+						stmt1.setObject(2, formattedDate);
+						stmt1.setString(3, horae.getText());
+						stmt1.setString(4, horas.getText());
+						stmt1.setString(5, escolhaRadio);
+						stmt1.setString(6, escolhaRadio);
+						stmt1.setString(7, idusuario);
+						stmt1.execute();
+						stmt1.close();
+						stmt.close();
+						con.close();
+						JOptionPane.showMessageDialog(null, "Operação Realizada com Sucesso");
+						sNome.setText("");
+						um = new JRadioButton("Um", false);
+						dois = new JRadioButton("Dois", false);
+						horae.setText("");
+						horas.setText("");
+
+					} 
+					stmt.close(); // Fechar o PreparedStatement após obter o ID
+	                rs.close(); // Fechar o ResultSet
+				} catch (SQLException es) {
+					// TODO Auto-generated catch block
+					es.printStackTrace();
+				}
+			}
+		});
+	}
+
+	public void ButtonListar() {
+		listar.setText("Listar");
+		listar.setFont(new Font("Ubuntu", 3, 25));
+		listar.setForeground(new Color(1, 1, 1));
+		add(listar);
+		listar.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+				Reuniao a = new Reuniao();
+				a.setVisible(true);
+			}
+		});
 	}
 
 	public void radio() {
 		grupo1 = new ButtonGroup();
-		um = new JRadioButton("Um", true);
+		um = new JRadioButton("Um", false);
 		dois = new JRadioButton("Dois", false);
 		um.setFont(new Font("Ubuntu", 2, 20));
 		dois.setFont(new Font("Ubuntu", 2, 20));
@@ -221,9 +322,9 @@ public class SegundaJanela extends JFrame {
 		@Override
 		public void itemStateChanged(ItemEvent event) {
 			if (um.isSelected())
-				JOptionPane.showMessageDialog(null, "Parabéns");
-			if (dois.isSelected())
-				JOptionPane.showMessageDialog(null, "troxa!");
+				escolhaRadio = "esquerda";
+			else if (dois.isSelected())
+				escolhaRadio = "direita";
 		}
 
 	}

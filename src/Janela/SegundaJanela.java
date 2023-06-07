@@ -73,7 +73,7 @@ public class SegundaJanela extends JFrame {
 	String escolhaRadio;
 	String formattedDate;
 	String idusuario;
-
+	Reuniao enciartexto;
 	public SegundaJanela() {
 
 		setIconImage(obj.icone());
@@ -292,8 +292,12 @@ public class SegundaJanela extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 
-				Reuniao a = new Reuniao();
-				a.setVisible(true);
+				try {
+					funcao();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 		});
 	}
@@ -415,5 +419,17 @@ public class SegundaJanela extends JFrame {
 		recebe = recebe.substring(0, 1).toUpperCase().concat(recebe.substring(1));
 		usu.setText(recebe);
 	}
+	public void funcao() throws SQLException{
+		if(enciartexto == null){
+		    enciartexto= new Reuniao();
+		    enciartexto.setVisible(true);
+		    enciartexto.recebendo(usu.getText());
+		    
+		}else{
+		    enciartexto.setVisible(true);
+		    enciartexto.setState(SegundaJanela.NORMAL);
+		    enciartexto.recebendo(usu.getText());
+		}
+		}   
 
 }

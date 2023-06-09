@@ -309,20 +309,16 @@ public class SegundaJanela extends JFrame {
 		um.setFont(new Font("Ubuntu", 2, 20));
 		dois.setFont(new Font("Ubuntu", 2, 20));
 		handler = new RadioButtonHandler();
-
 		grupo1.add(um);
 		grupo1.add(dois);
 		um.addItemListener(handler);
 		dois.addItemListener(handler);
-
 		setLayout(null);
 		add(um);
 		add(dois);
-
 	}
 
 	public class RadioButtonHandler implements ItemListener {
-
 		@Override
 		public void itemStateChanged(ItemEvent event) {
 			if (um.isSelected())
@@ -330,9 +326,7 @@ public class SegundaJanela extends JFrame {
 			else if (dois.isSelected())
 				escolhaRadio = "direita";
 		}
-
 	}
-
 	private void adjustComponents() {
 		int width = getWidth();
 		int height = getHeight();
